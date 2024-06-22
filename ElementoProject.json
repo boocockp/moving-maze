@@ -1,0 +1,400 @@
+{
+  "id": "project_1",
+  "name": "Moving Maze",
+  "properties": {},
+  "elements": [
+    {
+      "id": "app_1",
+      "name": "Main App",
+      "properties": {},
+      "elements": [
+        {
+          "id": "page_1",
+          "name": "Main Page",
+          "properties": {},
+          "elements": [
+            {
+              "id": "text_1",
+              "name": "Title",
+              "properties": {
+                "content": "Moving Maze App",
+                "styles": {
+                  "fontSize": 24
+                }
+              },
+              "kind": "Text"
+            },
+            {
+              "id": "calculation_1",
+              "name": "Rows",
+              "properties": {
+                "calculation": {
+                  "expr": "8"
+                },
+                "show": false
+              },
+              "kind": "Calculation"
+            },
+            {
+              "id": "calculation_2",
+              "name": "Columns",
+              "properties": {
+                "calculation": {
+                  "expr": "5"
+                },
+                "show": false
+              },
+              "kind": "Calculation"
+            },
+            {
+              "id": "calculation_3",
+              "name": "Number Of Positions",
+              "properties": {
+                "calculation": {
+                  "expr": "Rows * Columns"
+                },
+                "show": false
+              },
+              "kind": "Calculation"
+            },
+            {
+              "id": "calculation_4",
+              "name": "Number Of Obstacles",
+              "properties": {
+                "calculation": {
+                  "expr": "Floor(NumberOfPositions * 0.5)"
+                },
+                "show": false
+              },
+              "kind": "Calculation"
+            },
+            {
+              "id": "calculation_5",
+              "name": "Player Position",
+              "properties": {
+                "calculation": {
+                  "expr": "BoardPositions.value.indexOf('player')"
+                },
+                "show": false
+              },
+              "kind": "Calculation"
+            },
+            {
+              "id": "calculation_6",
+              "name": "Player Can Move",
+              "properties": {
+                "calculation": {
+                  "expr": "IsNull(HighlightedPosition)"
+                },
+                "show": false
+              },
+              "kind": "Calculation"
+            },
+            {
+              "id": "data_1",
+              "name": "Board Positions",
+              "properties": {
+                "initialValue": {
+                  "expr": "[]"
+                }
+              },
+              "kind": "Data"
+            },
+            {
+              "id": "data_2",
+              "name": "Highlighted Position",
+              "properties": {
+                "initialValue": {
+                  "expr": "null"
+                }
+              },
+              "kind": "Data"
+            },
+            {
+              "id": "data_3",
+              "name": "From Position",
+              "properties": {
+                "initialValue": {
+                  "expr": "null"
+                }
+              },
+              "kind": "Data"
+            },
+            {
+              "id": "data_4",
+              "name": "To Position",
+              "properties": {
+                "initialValue": {
+                  "expr": "null"
+                }
+              },
+              "kind": "Data"
+            },
+            {
+              "id": "data_5",
+              "name": "Moves",
+              "properties": {
+                "initialValue": {
+                  "expr": "0"
+                }
+              },
+              "kind": "Data"
+            },
+            {
+              "id": "timer_1",
+              "name": "Move Timer 1",
+              "properties": {
+                "period": 0.7,
+                "endAction": {
+                  "expr": "Move(FromPosition, ToPosition)"
+                },
+                "show": false
+              },
+              "kind": "Timer"
+            },
+            {
+              "id": "timer_2",
+              "name": "Move Timer 2",
+              "properties": {
+                "period": 1.5,
+                "endAction": {
+                  "expr": "Set(FromPosition, null)\nSet(ToPosition, null)"
+                },
+                "show": false
+              },
+              "kind": "Timer"
+            },
+            {
+              "id": "function_6",
+              "name": "Wait",
+              "properties": {
+                "javascript": true,
+                "calculation": {
+                  "expr": "return new Promise(resolve => setTimeout(resolve, time))"
+                },
+                "input1": "time"
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "function_1",
+              "name": "Start Game",
+              "properties": {
+                "action": true,
+                "calculation": {
+                  "expr": "let lastPosition = NumberOfPositions - 1\nlet possibleObstaclePositions = Range(0, lastPosition - Columns)\nlet obstaclePositions = RandomListFrom(possibleObstaclePositions, NumberOfObstacles)\nlet playerPosition = RandomFrom(Range(NumberOfPositions - Columns, lastPosition))\nlet board = ForEach(Range(0, lastPosition), If(ListContains(obstaclePositions, $index), 'obstacle', If($index == playerPosition, 'player', 'empty')))\nSet(BoardPositions, board)\nSet(Moves, 0)"
+                }
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "function_2",
+              "name": "Move",
+              "properties": {
+                "input1": "fromPosition",
+                "input2": "toPosition",
+                "action": true,
+                "calculation": {
+                  "expr": "let updatedBoard = WithUpdates(BoardPositions, fromPosition.toString(), 'empty', toPosition.toString(), ItemAt(BoardPositions, fromPosition))\nSet(BoardPositions, updatedBoard)"
+                }
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "function_4",
+              "name": "Can Move To",
+              "properties": {
+                "input1": "position",
+                "calculation": {
+                  "expr": "let difference = Math.abs(position - PlayerPosition)\nlet newPositionEmpty = ItemAt(BoardPositions, position) == 'empty'\nAnd(newPositionEmpty, Or(difference == 1, difference == 5))"
+                }
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "function_3",
+              "name": "Player Move",
+              "properties": {
+                "input1": "position",
+                "calculation": {
+                  "expr": "If(CanMoveTo(position), DoPlayerMove(position))\nIf(ItemAt(BoardPositions, position) == 'obstacle', DoPlayerObstacleMove(position))"
+                }
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "function_9",
+              "name": "Do Player Obstacle Move",
+              "properties": {
+                "input1": "position",
+                "calculation": {
+                  "expr": "ObstacleMove(position, RandomPosition('empty'))\nSet(Moves, Moves + 5)"
+                }
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "function_8",
+              "name": "Do Player Move",
+              "properties": {
+                "input1": "position",
+                "calculation": {
+                  "expr": "Move(PlayerPosition, position)\nObstacleMove(RandomPosition('obstacle'), RandomPosition('empty', position))\nSet(Moves, Moves + 1)"
+                }
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "function_7",
+              "name": "Obstacle Move",
+              "properties": {
+                "action": true,
+                "calculation": {
+                  "expr": "Set(FromPosition, from)\nSet(ToPosition, to)\nMoveTimer1.Start()\nMoveTimer2.Start()"
+                },
+                "input1": "from",
+                "input2": "to"
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "function_5",
+              "name": "Random Position",
+              "properties": {
+                "calculation": {
+                  "expr": "let allPositions = Range(0, NumberOfPositions - 1)\nlet possiblePositions = Select(allPositions, ItemAt(BoardPositions, $item) == positionType && $item != excludePosition)\nRandomFrom(possiblePositions) "
+                },
+                "input1": "positionType",
+                "input2": "excludePosition"
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "button_1",
+              "name": "Start",
+              "properties": {
+                "action": {
+                  "expr": "StartGame()"
+                }
+              },
+              "kind": "Button"
+            },
+            {
+              "id": "text_2",
+              "name": "Text 2",
+              "properties": {
+                "content": {
+                  "expr": "'Moves: ' + Moves"
+                }
+              },
+              "kind": "Text"
+            },
+            {
+              "id": "button_2",
+              "name": "Test",
+              "properties": {
+                "action": {
+                  "expr": "ObstacleMove()"
+                },
+                "show": false
+              },
+              "kind": "Button"
+            },
+            {
+              "id": "block_1",
+              "name": "Game Board",
+              "properties": {
+                "styles": {
+                  "maxWidth": "400px",
+                  "width": "100%",
+                  "aspectRatio": {
+                    "expr": "Columns + ' / ' + Rows"
+                  },
+                  "border": "1px solid blue"
+                }
+              },
+              "elements": [
+                {
+                  "id": "itemset_1",
+                  "name": "Board Pieces",
+                  "properties": {
+                    "items": {
+                      "expr": "BoardPositions"
+                    },
+                    "itemStyles": {
+                      "left": {
+                        "expr": "'calc(' + ($itemId % Columns) * (100 / Columns) + '% + ' + ($itemId % Columns)* 0 + 'px)'"
+                      },
+                      "top": {
+                        "expr": "'calc(' + Floor($itemId / Columns) *  (100 / Rows)  + '% + ' + Floor($itemId / Columns)* 0 + 'px)'"
+                      },
+                      "height": {
+                        "expr": "100 / Rows + '%'"
+                      },
+                      "width": {
+                        "expr": "100 / Columns + '%'"
+                      },
+                      "position": "absolute",
+                      "border": "1px solid blue",
+                      "backgroundColor": {
+                        "expr": "If(Or($itemId == FromPosition, $itemId == ToPosition), 'orange')"
+                      }
+                    },
+                    "selectAction": {
+                      "expr": "If(PlayerCanMove, PlayerMove($itemId))"
+                    }
+                  },
+                  "elements": [
+                    {
+                      "id": "icon_1",
+                      "name": "Piece Icon",
+                      "properties": {
+                        "iconName": {
+                          "expr": "If($item == 'obstacle', 'coronavirus', If($item == 'player', 'sentiment_very_satisfied'))"
+                        },
+                        "styles": {
+                          "position": "absolute",
+                          "top": "50%",
+                          "left": "50%",
+                          "translate": "-50% -50%",
+                          "color": {
+                            "expr": "If($item == 'obstacle', 'red', If($item == 'player', 'green'))"
+                          },
+                          "fontSize": "3em",
+                          "width": "60%",
+                          "backgroundColor": {
+                            "expr": "If($item == 'obstacle', 'yellow')"
+                          },
+                          "height": "60%",
+                          "paddingTop": "0%"
+                        }
+                      },
+                      "kind": "Icon"
+                    }
+                  ],
+                  "kind": "ItemSet"
+                }
+              ],
+              "kind": "Block"
+            }
+          ],
+          "kind": "Page"
+        }
+      ],
+      "kind": "App"
+    },
+    {
+      "id": "_TOOLS",
+      "name": "Tools",
+      "properties": {},
+      "kind": "ToolFolder"
+    },
+    {
+      "id": "_COMPONENTS",
+      "name": "Components",
+      "properties": {},
+      "kind": "ComponentFolder"
+    }
+  ],
+  "kind": "Project"
+}
