@@ -84,7 +84,7 @@
               "name": "Player Can Move",
               "properties": {
                 "calculation": {
-                  "expr": "IsNull(HighlightedPosition)"
+                  "expr": "And(IsNull(FromPosition), IsNull(ToPosition))"
                 },
                 "show": false
               },
@@ -96,16 +96,6 @@
               "properties": {
                 "initialValue": {
                   "expr": "[]"
-                }
-              },
-              "kind": "Data"
-            },
-            {
-              "id": "data_2",
-              "name": "Highlighted Position",
-              "properties": {
-                "initialValue": {
-                  "expr": "null"
                 }
               },
               "kind": "Data"
@@ -156,7 +146,7 @@
               "id": "timer_2",
               "name": "Move Timer 2",
               "properties": {
-                "period": 1.5,
+                "period": 1,
                 "endAction": {
                   "expr": "Set(FromPosition, null)\nSet(ToPosition, null)"
                 },
@@ -206,7 +196,18 @@
               "properties": {
                 "input1": "position",
                 "calculation": {
-                  "expr": "let difference = Math.abs(position - PlayerPosition)\nlet newPositionEmpty = ItemAt(BoardPositions, position) == 'empty'\nAnd(newPositionEmpty, Or(difference == 1, difference == 5))"
+                  "expr": "let difference = Math.abs(position - PlayerPosition)\nlet newPositionEmpty = ItemAt(BoardPositions, position) == 'empty'\nAnd(newPositionEmpty, Or(difference == 1, difference == Columns))"
+                }
+              },
+              "kind": "Function"
+            },
+            {
+              "id": "function_10",
+              "name": "Can Move Diagonal To",
+              "properties": {
+                "input1": "position",
+                "calculation": {
+                  "expr": "let difference = Math.abs(position - PlayerPosition)\nlet newPositionEmpty = ItemAt(BoardPositions, position) == 'empty'\nAnd(newPositionEmpty, Or(difference ==  Columns + 1, difference == Columns - 1))"
                 }
               },
               "kind": "Function"
@@ -217,8 +218,9 @@
               "properties": {
                 "input1": "position",
                 "calculation": {
-                  "expr": "If(CanMoveTo(position), DoPlayerMove(position))\nIf(ItemAt(BoardPositions, position) == 'obstacle', DoPlayerObstacleMove(position))"
-                }
+                  "expr": "If(CanMoveTo(position), DoPlayerMove(position, 1))\nIf(CanMoveDiagonalTo(position), DoPlayerMove(position, 3))\nIf(ItemAt(BoardPositions, position) == 'obstacle', DoPlayerObstacleMove(position))"
+                },
+                "action": true
               },
               "kind": "Function"
             },
@@ -239,8 +241,9 @@
               "properties": {
                 "input1": "position",
                 "calculation": {
-                  "expr": "Move(PlayerPosition, position)\nObstacleMove(RandomPosition('obstacle'), RandomPosition('empty', position))\nSet(Moves, Moves + 1)"
-                }
+                  "expr": "Move(PlayerPosition, position)\nObstacleMove(RandomPosition('obstacle'), RandomPosition('empty', position))\nSet(Moves, Moves + moveCost)"
+                },
+                "input2": "moveCost"
               },
               "kind": "Function"
             },

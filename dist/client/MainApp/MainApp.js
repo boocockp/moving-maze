@@ -25,7 +25,7 @@ const MainPage_BoardPiecesItem = React.memo(function MainPage_BoardPiecesItem(pr
 function MainPage(props) {
     const pathWith = name => props.path + '.' + name
     const {Page, TextElement, Calculation, Data, Timer, Button, Block, ItemSet} = Elemento.components
-    const {Floor, IsNull, Range, RandomListFrom, RandomFrom, ForEach, If, ListContains, WithUpdates, ItemAt, And, Or, Select} = Elemento.globalFunctions
+    const {Floor, And, IsNull, Range, RandomListFrom, RandomFrom, ForEach, If, ListContains, WithUpdates, ItemAt, Or, Select} = Elemento.globalFunctions
     const {Set} = Elemento.appFunctions
     const _state = Elemento.useGetStore()
     const Rows = _state.setObject(pathWith('Rows'), new Calculation.State({value: 8}))
@@ -34,16 +34,15 @@ function MainPage(props) {
     const NumberOfObstacles = _state.setObject(pathWith('NumberOfObstacles'), new Calculation.State({value: Floor(NumberOfPositions * 0.5)}))
     const BoardPositions = _state.setObject(pathWith('BoardPositions'), new Data.State({value: []}))
     const PlayerPosition = _state.setObject(pathWith('PlayerPosition'), new Calculation.State({value: BoardPositions.value.indexOf('player')}))
-    const HighlightedPosition = _state.setObject(pathWith('HighlightedPosition'), new Data.State({value: null}))
-    const PlayerCanMove = _state.setObject(pathWith('PlayerCanMove'), new Calculation.State({value: IsNull(HighlightedPosition)}))
     const FromPosition = _state.setObject(pathWith('FromPosition'), new Data.State({value: null}))
     const ToPosition = _state.setObject(pathWith('ToPosition'), new Data.State({value: null}))
+    const PlayerCanMove = _state.setObject(pathWith('PlayerCanMove'), new Calculation.State({value: And(IsNull(FromPosition), IsNull(ToPosition))}))
     const Moves = _state.setObject(pathWith('Moves'), new Data.State({value: 0}))
     const MoveTimer2_endAction = React.useCallback(($timer) => {
         Set(FromPosition, null)
         Set(ToPosition, null)
     }, [FromPosition, ToPosition])
-    const MoveTimer2 = _state.setObject(pathWith('MoveTimer2'), new Timer.State({period: 1.5, endAction: MoveTimer2_endAction}))
+    const MoveTimer2 = _state.setObject(pathWith('MoveTimer2'), new Timer.State({period: 1, endAction: MoveTimer2_endAction}))
     const Wait = React.useCallback((time) => {
         return new Promise(resolve => setTimeout(resolve, time))
     }, [])
@@ -67,8 +66,13 @@ function MainPage(props) {
     const CanMoveTo = React.useCallback((position) => {
         let difference = Math.abs(position - PlayerPosition)
         let newPositionEmpty = ItemAt(BoardPositions, position) == 'empty'
-        return And(newPositionEmpty, Or(difference == 1, difference == 5))
-    }, [PlayerPosition, BoardPositions])
+        return And(newPositionEmpty, Or(difference == 1, difference == Columns))
+    }, [PlayerPosition, BoardPositions, Columns])
+    const CanMoveDiagonalTo = React.useCallback((position) => {
+        let difference = Math.abs(position - PlayerPosition)
+        let newPositionEmpty = ItemAt(BoardPositions, position) == 'empty'
+        return And(newPositionEmpty, Or(difference ==  Columns + 1, difference == Columns - 1))
+    }, [PlayerPosition, BoardPositions, Columns])
     const ObstacleMove = React.useCallback((from, to) => {
         Set(FromPosition, from)
         Set(ToPosition, to)
@@ -84,15 +88,16 @@ function MainPage(props) {
         ObstacleMove(position, RandomPosition('empty'))
         return Set(Moves, Moves + 5)
     }, [ObstacleMove, RandomPosition, Moves])
-    const DoPlayerMove = React.useCallback((position) => {
+    const DoPlayerMove = React.useCallback((position, moveCost) => {
         Move(PlayerPosition, position)
         ObstacleMove(RandomPosition('obstacle'), RandomPosition('empty', position))
-        return Set(Moves, Moves + 1)
+        return Set(Moves, Moves + moveCost)
     }, [Move, PlayerPosition, ObstacleMove, RandomPosition, Moves])
     const PlayerMove = React.useCallback((position) => {
-        If(CanMoveTo(position), () => DoPlayerMove(position))
+        If(CanMoveTo(position), () => DoPlayerMove(position, 1))
+        If(CanMoveDiagonalTo(position), () => DoPlayerMove(position, 3))
         return If(ItemAt(BoardPositions, position) == 'obstacle', () => DoPlayerObstacleMove(position))
-    }, [CanMoveTo, DoPlayerMove, BoardPositions, DoPlayerObstacleMove])
+    }, [CanMoveTo, DoPlayerMove, CanMoveDiagonalTo, BoardPositions, DoPlayerObstacleMove])
     const BoardPieces_selectAction = React.useCallback(async ($item, $itemId) => {
         If(PlayerCanMove, async () => await PlayerMove($itemId))
     }, [PlayerCanMove, PlayerMove])
@@ -114,7 +119,6 @@ function MainPage(props) {
         React.createElement(Calculation, {path: pathWith('PlayerPosition'), show: false}),
         React.createElement(Calculation, {path: pathWith('PlayerCanMove'), show: false}),
         React.createElement(Data, {path: pathWith('BoardPositions'), display: false}),
-        React.createElement(Data, {path: pathWith('HighlightedPosition'), display: false}),
         React.createElement(Data, {path: pathWith('FromPosition'), display: false}),
         React.createElement(Data, {path: pathWith('ToPosition'), display: false}),
         React.createElement(Data, {path: pathWith('Moves'), display: false}),
