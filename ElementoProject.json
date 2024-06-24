@@ -17,9 +17,10 @@
               "id": "text_1",
               "name": "Title",
               "properties": {
-                "content": "Moving Maze App",
+                "content": "Moving Maze",
                 "styles": {
-                  "fontSize": 24
+                  "fontSize": 24,
+                  "fontFamily": "fantasy, Arial"
                 }
               },
               "kind": "Text"
@@ -304,16 +305,20 @@
               "kind": "Button"
             },
             {
-              "id": "block_1",
+              "id": "layout_1",
               "name": "Game Board",
               "properties": {
+                "horizontal": true,
+                "wrap": true,
                 "styles": {
-                  "maxWidth": "400px",
                   "width": "100%",
+                  "maxWidth": "400px",
                   "aspectRatio": {
-                    "expr": "Columns + ' / ' + Rows"
+                    "expr": "Columns/Rows"
                   },
-                  "border": "1px solid blue"
+                  "gap": "0",
+                  "border": "1px solid blue",
+                  "backgroundColor": "blue"
                 }
               },
               "elements": [
@@ -325,23 +330,16 @@
                       "expr": "BoardPositions"
                     },
                     "itemStyles": {
-                      "left": {
-                        "expr": "'calc(' + ($itemId % Columns) * (100 / Columns) + '% + ' + ($itemId % Columns)* 0 + 'px)'"
-                      },
-                      "top": {
-                        "expr": "'calc(' + Floor($itemId / Columns) *  (100 / Rows)  + '% + ' + Floor($itemId / Columns)* 0 + 'px)'"
-                      },
-                      "height": {
-                        "expr": "100 / Rows + '%'"
-                      },
                       "width": {
                         "expr": "100 / Columns + '%'"
                       },
-                      "position": "absolute",
                       "border": "1px solid blue",
                       "backgroundColor": {
-                        "expr": "If(Or($itemId == FromPosition, $itemId == ToPosition), 'orange')"
-                      }
+                        "expr": "If(Or($itemId == FromPosition, $itemId == ToPosition), 'orange', 'white')"
+                      },
+                      "aspectRatio": "1",
+                      "boxSizing": "border-box",
+                      "position": "relative"
                     },
                     "selectAction": {
                       "expr": "If(PlayerCanMove, PlayerMove($itemId))"
@@ -378,7 +376,7 @@
                   "kind": "ItemSet"
                 }
               ],
-              "kind": "Block"
+              "kind": "Layout"
             }
           ],
           "kind": "Page"

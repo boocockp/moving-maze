@@ -8,13 +8,12 @@ const MainPage_BoardPiecesItem = React.memo(function MainPage_BoardPiecesItem(pr
     const parentPathWith = name => Elemento.parentPath(props.path) + '.' + name
     const {$item, $itemId, $selected, onClick} = props
     const {ItemSetItem, Icon} = Elemento.components
-    const {Floor, If, Or} = Elemento.globalFunctions
+    const {If, Or} = Elemento.globalFunctions
     const _state = Elemento.useGetStore()
     const Columns = _state.useObject(parentPathWith('Columns'))
-    const Rows = _state.useObject(parentPathWith('Rows'))
     const FromPosition = _state.useObject(parentPathWith('FromPosition'))
     const ToPosition = _state.useObject(parentPathWith('ToPosition'))
-    const styles = {left: 'calc(' + ($itemId % Columns) * (100 / Columns) + '% + ' + ($itemId % Columns)* 0 + 'px)', top: 'calc(' + Floor($itemId / Columns) *  (100 / Rows)  + '% + ' + Floor($itemId / Columns)* 0 + 'px)', height: 100 / Rows + '%', width: 100 / Columns + '%', position: 'absolute', border: '1px solid blue', backgroundColor: If(Or($itemId == FromPosition, $itemId == ToPosition), 'orange')}
+    const styles = {width: 100 / Columns + '%', border: '1px solid blue', backgroundColor: If(Or($itemId == FromPosition, $itemId == ToPosition), 'orange', 'white'), aspectRatio: '1', boxSizing: 'border-box', position: 'relative'}
 
     return React.createElement(ItemSetItem, {path: props.path, onClick, styles},
         React.createElement(Icon, {path: pathWith('PieceIcon'), iconName: If($item == 'obstacle', 'coronavirus', () => If($item == 'player', 'sentiment_very_satisfied')), styles: {position: 'absolute', top: '50%', left: '50%', translate: '-50% -50%', color: If($item == 'obstacle', 'red', () => If($item == 'player', 'green')), fontSize: '3em', width: '60%', backgroundColor: If($item == 'obstacle', 'yellow'), height: '60%', paddingTop: '0%'}}),
@@ -24,7 +23,7 @@ const MainPage_BoardPiecesItem = React.memo(function MainPage_BoardPiecesItem(pr
 
 function MainPage(props) {
     const pathWith = name => props.path + '.' + name
-    const {Page, TextElement, Calculation, Data, Timer, Button, Block, ItemSet} = Elemento.components
+    const {Page, TextElement, Calculation, Data, Timer, Button, Layout, ItemSet} = Elemento.components
     const {Floor, And, IsNull, Range, RandomListFrom, RandomFrom, ForEach, If, ListContains, WithUpdates, ItemAt, Or, Select} = Elemento.globalFunctions
     const {Set} = Elemento.appFunctions
     const _state = Elemento.useGetStore()
@@ -111,7 +110,7 @@ function MainPage(props) {
     Elemento.elementoDebug(eval(Elemento.useDebugExpr()))
 
     return React.createElement(Page, {path: props.path},
-        React.createElement(TextElement, {path: pathWith('Title'), styles: {fontSize: 24}, content: 'Moving Maze App'}),
+        React.createElement(TextElement, {path: pathWith('Title'), styles: {fontSize: 24, fontFamily: 'fantasy, Arial'}, content: 'Moving Maze'}),
         React.createElement(Calculation, {path: pathWith('Rows'), show: false}),
         React.createElement(Calculation, {path: pathWith('Columns'), show: false}),
         React.createElement(Calculation, {path: pathWith('NumberOfPositions'), show: false}),
@@ -127,7 +126,7 @@ function MainPage(props) {
         React.createElement(Button, {path: pathWith('Start'), content: 'Start', appearance: 'outline', action: Start_action}),
         React.createElement(TextElement, {path: pathWith('Text2'), content: 'Moves: ' + Moves}),
         React.createElement(Button, {path: pathWith('Test'), content: 'Test', appearance: 'outline', show: false, action: Test_action}),
-        React.createElement(Block, {path: pathWith('GameBoard'), styles: {maxWidth: '400px', width: '100%', aspectRatio: Columns + ' / ' + Rows, border: '1px solid blue'}},
+        React.createElement(Layout, {path: pathWith('GameBoard'), horizontal: true, wrap: true, styles: {width: '100%', maxWidth: '400px', aspectRatio: Columns/Rows, gap: '0', border: '1px solid blue', backgroundColor: 'blue'}},
             React.createElement(ItemSet, {path: pathWith('BoardPieces'), itemContentComponent: MainPage_BoardPiecesItem}),
     ),
     )
