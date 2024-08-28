@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="Bundled (Maven 3)" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_15" default="true" project-jdk-name="15" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="SbtLocalSettings">
+    <option name="modificationStamps">
+      <map>
+        <entry key="$USER_HOME$/Documents/Reactive Programming/Assignments/actorbintree" value="1431268276000" />
+        <entry key="$USER_HOME$/Documents/Reactive Programming/Assignments/calculator" value="1429536320000" />
+        <entry key="$USER_HOME$/Documents/Reactive Programming/Assignments/kvstore" value="1431906906000" />
+        <entry key="$USER_HOME$/Documents/Reactive Programming/Assignments/nodescala" value="1430083828000" />
+        <entry key="$USER_HOME$/Documents/Reactive Programming/Assignments/quickcheck" value="1429111302000" />
+        <entry key="$USER_HOME$/Documents/Reactive Programming/Assignments/suggestions" value="1430777854000" />
+      </map>
+    </option>
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
+</project>
