@@ -86,7 +86,7 @@
               "name": "Points Allowed",
               "properties": {
                 "calculation": {
-                  "expr": "50"
+                  "expr": "40"
                 },
                 "show": false
               },
@@ -306,7 +306,7 @@
               "properties": {
                 "action": true,
                 "calculation": {
-                  "expr": "let lastPosition = NumberOfPositions - 1\nlet possibleObstaclePositions = Range(0, lastPosition - Columns)\nlet obstaclePositions = RandomListFrom(possibleObstaclePositions, NumberOfObstacles)\nlet playerPosition = RandomFrom(Range(NumberOfPositions - Columns, lastPosition))\nlet board = ForEach(Range(0, lastPosition), If(ListContains(obstaclePositions, $index), 'obstacle', If($index == playerPosition, 'player', 'empty')))\nSet(BoardPositions, board)\nReset(PointsUsed)\n"
+                  "expr": "let lastPosition = NumberOfPositions - 1\nlet possibleObstaclePositions = Range(0, lastPosition - Columns)\nlet obstaclePositions = RandomListFrom(possibleObstaclePositions, NumberOfObstacles)\nlet playerPosition = RandomFrom(Range(NumberOfPositions - Columns, lastPosition))\nlet board = ForEach(Range(0, lastPosition), If(ListContains(obstaclePositions, $index), Random(3, 9), If($index == playerPosition, 'player', 'empty')))\nSet(BoardPositions, board)\nReset(PointsUsed)\n"
                 }
               },
               "kind": "Function"
@@ -391,12 +391,23 @@
               "kind": "Function"
             },
             {
+              "id": "function_20",
+              "name": "Item Type",
+              "properties": {
+                "input1": "position",
+                "calculation": {
+                  "expr": "let item = ItemAt(BoardPositions, position)\nIf(item == 'empty', 'empty', If(item == 'player', 'player', 'obstacle'))"
+                }
+              },
+              "kind": "Function"
+            },
+            {
               "id": "function_4",
               "name": "Can Move To",
               "properties": {
                 "input1": "position",
                 "calculation": {
-                  "expr": "let difference = Math.abs(position - PlayerPosition)\nlet newPositionEmpty = ItemAt(BoardPositions, position) == 'empty'\nAnd(newPositionEmpty, Or(difference == 1, difference == Columns))"
+                  "expr": "let difference = Math.abs(position - PlayerPosition)\nlet newPositionEmpty = ItemType(position) == 'empty'\nAnd(newPositionEmpty, Or(difference == 1, difference == Columns))"
                 }
               },
               "kind": "Function"
@@ -407,7 +418,7 @@
               "properties": {
                 "input1": "position",
                 "calculation": {
-                  "expr": "let difference = Math.abs(position - PlayerPosition)\nlet newPositionEmpty = ItemAt(BoardPositions, position) == 'empty'\nAnd(newPositionEmpty, Or(difference ==  Columns + 1, difference == Columns - 1))"
+                  "expr": "let difference = Math.abs(position - PlayerPosition)\nlet newPositionEmpty = ItemType(position) == 'empty'\nAnd(newPositionEmpty, Or(difference ==  Columns + 1, difference == Columns - 1))"
                 }
               },
               "kind": "Function"
@@ -418,7 +429,7 @@
               "properties": {
                 "input1": "position",
                 "calculation": {
-                  "expr": "If(CanMoveTo(position), DoPlayerMove(position, 1))\nIf(CanMoveDiagonalTo(position), DoPlayerMove(position, 3))\nIf(ItemAt(BoardPositions, position) == 'obstacle', DoPlayerObstacleMove(position))"
+                  "expr": "If(CanMoveTo(position), DoPlayerMove(position, 1))\nIf(CanMoveDiagonalTo(position), DoPlayerMove(position, 3))\nIf(ItemType(position) == 'obstacle', DoPlayerObstacleMove(position))"
                 },
                 "action": true
               },
@@ -430,7 +441,7 @@
               "properties": {
                 "input1": "position",
                 "calculation": {
-                  "expr": "ObstacleMove(position, RandomPosition('empty'))\nSet(PointsUsed, PointsUsed + 5)"
+                  "expr": "let cost = ItemAt(BoardPositions, position)\nObstacleMove(position, RandomPosition('empty'))\nSet(PointsUsed, PointsUsed + cost)"
                 }
               },
               "kind": "Function"
@@ -465,7 +476,7 @@
               "name": "Random Position",
               "properties": {
                 "calculation": {
-                  "expr": "let allPositions = Range(0, NumberOfPositions - 1)\nlet possiblePositions = Select(allPositions, ItemAt(BoardPositions, $item) == positionType && $item != excludePosition)\nRandomFrom(possiblePositions) "
+                  "expr": "let allPositions = Range(0, NumberOfPositions - 1)\nlet possiblePositions = Select(allPositions, ItemType($item) == positionType && $item != excludePosition)\nRandomFrom(possiblePositions) "
                 },
                 "input1": "positionType",
                 "input2": "excludePosition"
@@ -501,7 +512,7 @@
                   "id": "text_3",
                   "name": "Instructions Text",
                   "properties": {
-                    "content": "Move your piece - the smiley face - to the top row of the board, while keeping as many points as possible.\n\n\nClick on an empty space next to your smiley to move it.  Horizontal or vertical moves cost 1 point, diagonal moves cost 3 points. \n\n\nClick on an obstacle to make it move somewhere else - this costs 5 points.\n\n\n\nAnd we should mention that after each of your moves, one of the obstacles will make a random move (wait for this to finish before trying to move again).\n\n\nYou score as many points as you have left when you get to the top row.\n\n\nClick New Maze to start again.\n\n\nYou have 3 minutes to complete as many boards as you can.",
+                    "content": "Move the smiley face to the top row of the board, while keeping as many points as possible.\n\n\nClick on an empty space next to your smiley to move it.  Horizontal or vertical moves cost 1 point, diagonal moves cost 3 points. \n\n\nClick on an obstacle to make it move somewhere else - this costs the number of points on the obstacle.\n\n\n\nAnd we should mention that after each of your moves, one of the obstacles will make a random move (wait for this to finish before trying to move again).\n\n\nYou score as many points as you have left when you get to the top row.\n\n\nClick New Maze to start again.\n\n\nYou have 3 minutes to complete as many mazes as you can.",
                     "allowHtml": true
                   },
                   "kind": "Text"
@@ -620,7 +631,7 @@
                   "id": "text_8",
                   "name": "Ready Text",
                   "properties": {
-                    "content": "Move your smiley face to the top of the board while keeping as many points as possible.\n\nClick on empty adjacent squares to move your piece, or click on an obstacle to move it.\n\nClick Instructions for full details\n\nOr Start Game to dive straight in!",
+                    "content": "Move your smiley face to the top of the board while keeping as many points as possible.\n\nClick on empty adjacent squares to move the smiley, or click on an obstacle to move it.\n\nClick Instructions for full details\n\nOr Start Game to dive straight in!",
                     "styles": {
                       "fontSize": "20"
                     }
@@ -640,7 +651,8 @@
                 },
                 "styles": {
                   "width": "100%",
-                  "padding": "0"
+                  "padding": "0",
+                  "position": "relative"
                 }
               },
               "elements": [
@@ -674,7 +686,7 @@
                           },
                           "border": "1px solid blue",
                           "backgroundColor": {
-                            "expr": "If(Or($itemId == FromPosition, $itemId == ToPosition), 'orange', 'white')"
+                            "expr": "If(Or($itemId == FromPosition, $itemId == ToPosition), 'orange', If($itemId < Columns, 'lightgreen', 'white'))"
                           },
                           "aspectRatio": "1",
                           "boxSizing": "border-box",
@@ -685,6 +697,34 @@
                         }
                       },
                       "elements": [
+                        {
+                          "id": "text_21",
+                          "name": "Obstacle",
+                          "properties": {
+                            "content": {
+                              "expr": "$item"
+                            },
+                            "show": {
+                              "expr": "And($item != 'player', $item != 'empty')"
+                            },
+                            "styles": {
+                              "color": "white",
+                              "height": "60%",
+                              "width": "60%",
+                              "fontSize": "2.1em",
+                              "translate": "-50% -50%",
+                              "position": "absolute",
+                              "top": "50%",
+                              "left": "50%",
+                              "textAlign": "center",
+                              "borderRadius": "5px",
+                              "backgroundColor": {
+                                "expr": "`hsl(${$item * 40}deg, 50%, 50%)`"
+                              }
+                            }
+                          },
+                          "kind": "Text"
+                        },
                         {
                           "id": "icon_1",
                           "name": "Piece Icon",
@@ -707,6 +747,32 @@
                               },
                               "height": "60%",
                               "paddingTop": "0%"
+                            }
+                          },
+                          "kind": "Icon"
+                        },
+                        {
+                          "id": "icon_2",
+                          "name": "Player Icon",
+                          "properties": {
+                            "iconName": {
+                              "expr": "'sentiment_very_satisfied'"
+                            },
+                            "styles": {
+                              "position": "absolute",
+                              "top": "50%",
+                              "left": "50%",
+                              "translate": "-50% -50%",
+                              "color": {
+                                "expr": "'green'"
+                              },
+                              "fontSize": "3em",
+                              "width": "60%",
+                              "height": "60%",
+                              "paddingTop": "0%"
+                            },
+                            "show": {
+                              "expr": "$item == 'player'"
                             }
                           },
                           "kind": "Icon"
@@ -773,6 +839,18 @@
                   "properties": {
                     "show": {
                       "expr": "Status == 'Ended'"
+                    },
+                    "styles": {
+                      "position": "absolute",
+                      "left": "40%",
+                      "translate": "-50% -50%",
+                      "top": "50%",
+                      "backgroundColor": "lightblue",
+                      "padding": "1em",
+                      "borderRadius": "10px",
+                      "border": "2px solid blue",
+                      "opacity": "1",
+                      "minWidth": "20em"
                     }
                   },
                   "elements": [
