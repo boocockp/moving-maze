@@ -14,12 +14,11 @@ const MainPage_BoardPiecesItem = React.memo(function MainPage_BoardPiecesItem(pr
     const FromPosition = _state.useObject(parentPathWith('FromPosition'))
     const ToPosition = _state.useObject(parentPathWith('ToPosition'))
     const canDragItem = undefined
-    const styles = elProps(pathTo('BoardPieces.Styles')).width(100 / Columns + '%').border('1px solid blue').backgroundColor(If(Or($itemId == FromPosition, $itemId == ToPosition), 'orange', () => If($itemId < Columns, 'lightgreen', 'white'))).aspectRatio('1').boxSizing('border-box').position('relative').props
+    const styles = elProps(pathTo('BoardPieces.Styles')).width(100 / Columns + '%').border('1px solid blue').backgroundColor(If(Or($itemId == FromPosition, $itemId == ToPosition), 'orange', () => If($itemId < Columns, 'lightgreen', 'white'))).boxSizing('border-box').position('relative').aspectRatio('1.2').props
 
     return React.createElement(ItemSetItem, {path: props.path, item: $item, itemId: $itemId, index: $index, onClick, canDragItem, styles},
-        React.createElement(TextElement, elProps(pathTo('Obstacle')).show(And($item != 'player', $item != 'empty')).styles(elProps(pathTo('Obstacle.Styles')).color('white').height('60%').width('60%').fontSize('2.1em').translate('-50% -50%').position('absolute').top('50%').left('50%').textAlign('center').borderRadius('5px').backgroundColor(`hsl(${$item * 40}deg, 50%, 50%)`).props).content($item).props),
-        React.createElement(Icon, elProps(pathTo('PieceIcon')).iconName(If($item == 'obstacle', 'coronavirus', () => If($item == 'player', 'sentiment_very_satisfied'))).styles(elProps(pathTo('PieceIcon.Styles')).position('absolute').top('50%').left('50%').translate('-50% -50%').color(If($item == 'obstacle', 'red', () => If($item == 'player', 'green'))).fontSize('3em').width('60%').backgroundColor(If($item == 'obstacle', 'green')).height('60%').paddingTop('0%').props).props),
-        React.createElement(Icon, elProps(pathTo('PlayerIcon')).iconName('sentiment_very_satisfied').show($item == 'player').styles(elProps(pathTo('PlayerIcon.Styles')).position('absolute').top('50%').left('50%').translate('-50% -50%').color('green').fontSize('3em').width('60%').height('60%').paddingTop('0%').props).props),
+        React.createElement(TextElement, elProps(pathTo('Obstacle')).show(And($item != 'player', $item != 'empty')).styles(elProps(pathTo('Obstacle.Styles')).color('white').height('60%').width('60%').fontSize('2em').translate('-50% -50%').position('absolute').top('50%').left('50%').textAlign('center').borderRadius('5px').backgroundColor(`hsl(${$item * 40}deg, 50%, 50%)`).lineHeight('1.2em').props).content($item).props),
+        React.createElement(Icon, elProps(pathTo('PlayerIcon')).iconName('sentiment_very_satisfied').show($item == 'player').styles(elProps(pathTo('PlayerIcon.Styles')).position('absolute').top('50%').left('50%').translate('-50% -50%').color('green').fontSize('2.5em').width('60%').height('60%').paddingTop('0%').props).props),
     )
 })
 
@@ -165,7 +164,6 @@ function MainPage(props) {
     const EndedPanel = _state.setObject(pathTo('EndedPanel'), new Block.State(stateProps(pathTo('EndedPanel')).props))
     const RoundControls = _state.setObject(pathTo('RoundControls'), new Block.State(stateProps(pathTo('RoundControls')).props))
     const PausePanel = _state.setObject(pathTo('PausePanel'), new Block.State(stateProps(pathTo('PausePanel')).props))
-    const Spacer = _state.setObject(pathTo('Spacer'), new Block.State(stateProps(pathTo('Spacer')).props))
     const GameControls = _state.setObject(pathTo('GameControls'), new Block.State(stateProps(pathTo('GameControls')).props))
     const StartGame2_action = React.useCallback(wrapFn(pathTo('StartGame2'), 'action', async () => {
         await StartNewGame()
@@ -258,8 +256,8 @@ Click Instructions for full details
 
 Or Start Game to dive straight in!`).props),
     ),
-        React.createElement(Block, elProps(pathTo('PlayPanel')).layout('vertical').show(Or(Status == 'Playing', Status == 'Ended')).styles(elProps(pathTo('PlayPanel.Styles')).width('100%').padding('0').position('relative').props).props,
-            React.createElement(Block, elProps(pathTo('GameBoard')).layout('horizontal wrapped').styles(elProps(pathTo('GameBoard.Styles')).width('100%').maxWidth('400px').aspectRatio(Columns/Rows).gap('0').border('1px solid blue').backgroundColor('blue').props).props,
+        React.createElement(Block, elProps(pathTo('PlayPanel')).layout('vertical').show(Or(Status == 'Playing', Status == 'Ended')).styles(elProps(pathTo('PlayPanel.Styles')).width('100%').padding('0').position('relative').maxWidth('400px').props).props,
+            React.createElement(Block, elProps(pathTo('GameBoard')).layout('horizontal wrapped').styles(elProps(pathTo('GameBoard.Styles')).width('100%').maxWidth('400px').aspectRatio((Columns/Rows) * 1.2).gap('0').border('1px solid blue').backgroundColor('blue').props).props,
             React.createElement(ItemSet, elProps(pathTo('BoardPieces')).itemContentComponent(MainPage_BoardPiecesItem).props),
     ),
             React.createElement(Block, elProps(pathTo('RoundStatusBlock')).layout('horizontal').props,
@@ -269,7 +267,7 @@ Or Start Game to dive straight in!`).props),
             React.createElement(TextElement, elProps(pathTo('RoundSkipped')).show(RoundSkipped).content('Skipped').props),
             React.createElement(Button, elProps(pathTo('NewRound')).content('New Maze').appearance('filled').show(Status == 'Playing' && IsRoundComplete).action(NewRound_action).props),
     ),
-            React.createElement(Block, elProps(pathTo('EndedPanel')).layout('vertical').show(Status == 'Ended').styles(elProps(pathTo('EndedPanel.Styles')).position('absolute').left('40%').translate('-50% -50%').top('50%').backgroundColor('lightblue').padding('1em').borderRadius('10px').border('2px solid blue').opacity('1').minWidth('20em').props).props,
+            React.createElement(Block, elProps(pathTo('EndedPanel')).layout('vertical').show(Status == 'Ended').styles(elProps(pathTo('EndedPanel.Styles')).position('absolute').left('50%').translate('-50% -50%').top('50%').backgroundColor('lightblue').padding('1em').borderRadius('10px').border('2px solid blue').opacity('1').minWidth('20em').props).props,
             React.createElement(TextElement, elProps(pathTo('Title')).styles(elProps(pathTo('Title.Styles')).fontFamily('fantasy, Arial').fontSize('28').color('#039a03').props).content('Congratulations!').props),
             React.createElement(TextElement, elProps(pathTo('Score')).content('You have scored ' + Score + ' points!').props),
             React.createElement(TextElement, elProps(pathTo('Whatnext')).content('Click Start Game to have another go').props),
@@ -282,7 +280,6 @@ Or Start Game to dive straight in!`).props),
             React.createElement(TextElement, elProps(pathTo('Title')).styles(elProps(pathTo('Title.Styles')).color('#7529df').fontFamily('Luckiest Guy').fontSize('28').props).content('Paused...').props),
             React.createElement(TextElement, elProps(pathTo('PauseText')).styles(elProps(pathTo('PauseText.Styles')).fontSize('20').props).content('Click Continue Game to carry on').props),
     ),
-        React.createElement(Block, elProps(pathTo('Spacer')).layout('vertical').styles(elProps(pathTo('Spacer.Styles')).borderBottom('2px solid lightgray').width('100%').props).props),
         React.createElement(Block, elProps(pathTo('GameControls')).layout('horizontal').styles(elProps(pathTo('GameControls.Styles')).paddingTop('20px').props).props,
             React.createElement(Button, elProps(pathTo('StartGame')).content('Start Game').appearance('filled').show(Not(GameRunning)).action(StartGame_action).props),
             React.createElement(Button, elProps(pathTo('StopGame')).content('Stop Game').appearance('outline').show(GameRunning).action(StopGame_action).props),

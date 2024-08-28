@@ -652,7 +652,8 @@
                 "styles": {
                   "width": "100%",
                   "padding": "0",
-                  "position": "relative"
+                  "position": "relative",
+                  "maxWidth": "400px"
                 }
               },
               "elements": [
@@ -665,7 +666,7 @@
                       "width": "100%",
                       "maxWidth": "400px",
                       "aspectRatio": {
-                        "expr": "Columns/Rows"
+                        "expr": "(Columns/Rows) * 1.2"
                       },
                       "gap": "0",
                       "border": "1px solid blue",
@@ -688,9 +689,9 @@
                           "backgroundColor": {
                             "expr": "If(Or($itemId == FromPosition, $itemId == ToPosition), 'orange', If($itemId < Columns, 'lightgreen', 'white'))"
                           },
-                          "aspectRatio": "1",
                           "boxSizing": "border-box",
-                          "position": "relative"
+                          "position": "relative",
+                          "aspectRatio": "1.2"
                         },
                         "selectAction": {
                           "expr": "If(PlayerCanMove, PlayerMove($itemId))"
@@ -711,7 +712,7 @@
                               "color": "white",
                               "height": "60%",
                               "width": "60%",
-                              "fontSize": "2.1em",
+                              "fontSize": "2em",
                               "translate": "-50% -50%",
                               "position": "absolute",
                               "top": "50%",
@@ -720,36 +721,11 @@
                               "borderRadius": "5px",
                               "backgroundColor": {
                                 "expr": "`hsl(${$item * 40}deg, 50%, 50%)`"
-                              }
+                              },
+                              "lineHeight": "1.2em"
                             }
                           },
                           "kind": "Text"
-                        },
-                        {
-                          "id": "icon_1",
-                          "name": "Piece Icon",
-                          "properties": {
-                            "iconName": {
-                              "expr": "If($item == 'obstacle', 'coronavirus', If($item == 'player', 'sentiment_very_satisfied'))"
-                            },
-                            "styles": {
-                              "position": "absolute",
-                              "top": "50%",
-                              "left": "50%",
-                              "translate": "-50% -50%",
-                              "color": {
-                                "expr": "If($item == 'obstacle', 'red', If($item == 'player', 'green'))"
-                              },
-                              "fontSize": "3em",
-                              "width": "60%",
-                              "backgroundColor": {
-                                "expr": "If($item == 'obstacle', 'green')"
-                              },
-                              "height": "60%",
-                              "paddingTop": "0%"
-                            }
-                          },
-                          "kind": "Icon"
                         },
                         {
                           "id": "icon_2",
@@ -766,7 +742,7 @@
                               "color": {
                                 "expr": "'green'"
                               },
-                              "fontSize": "3em",
+                              "fontSize": "2.5em",
                               "width": "60%",
                               "height": "60%",
                               "paddingTop": "0%"
@@ -867,7 +843,7 @@
                     },
                     "styles": {
                       "position": "absolute",
-                      "left": "40%",
+                      "left": "50%",
                       "translate": "-50% -50%",
                       "top": "50%",
                       "backgroundColor": "lightblue",
@@ -977,17 +953,6 @@
                   "kind": "Text"
                 }
               ],
-              "kind": "Block"
-            },
-            {
-              "id": "block_11",
-              "name": "Spacer",
-              "properties": {
-                "styles": {
-                  "borderBottom": "2px solid lightgray",
-                  "width": "100%"
-                }
-              },
               "kind": "Block"
             },
             {
