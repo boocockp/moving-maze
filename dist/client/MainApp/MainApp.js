@@ -161,6 +161,7 @@ function MainPage(props) {
         If(PlayerCanMove, async () => await PlayerMove($itemId))
     }), [PlayerCanMove, PlayerMove])
     const BoardPieces = _state.setObject(pathTo('BoardPieces'), new ItemSet.State(stateProps(pathTo('BoardPieces')).items(BoardPositions).selectAction(BoardPieces_selectAction).props))
+    const RoundStatusBlock = _state.setObject(pathTo('RoundStatusBlock'), new Block.State(stateProps(pathTo('RoundStatusBlock')).props))
     const EndedPanel = _state.setObject(pathTo('EndedPanel'), new Block.State(stateProps(pathTo('EndedPanel')).props))
     const RoundControls = _state.setObject(pathTo('RoundControls'), new Block.State(stateProps(pathTo('RoundControls')).props))
     const PausePanel = _state.setObject(pathTo('PausePanel'), new Block.State(stateProps(pathTo('PausePanel')).props))
@@ -261,17 +262,19 @@ Or Start Game to dive straight in!`).props),
             React.createElement(Block, elProps(pathTo('GameBoard')).layout('horizontal wrapped').styles(elProps(pathTo('GameBoard.Styles')).width('100%').maxWidth('400px').aspectRatio(Columns/Rows).gap('0').border('1px solid blue').backgroundColor('blue').props).props,
             React.createElement(ItemSet, elProps(pathTo('BoardPieces')).itemContentComponent(MainPage_BoardPiecesItem).props),
     ),
+            React.createElement(Block, elProps(pathTo('RoundStatusBlock')).layout('horizontal').props,
             React.createElement(TextElement, elProps(pathTo('RoundInProgress')).show(RoundInPlay).content('You have ' + BoardPointsRemaining + ' points left on this maze').props),
             React.createElement(TextElement, elProps(pathTo('RoundWon')).show(IsRoundWon).content('You made it! ' + BoardPointsRemaining + ' points added').props),
             React.createElement(TextElement, elProps(pathTo('RoundFailed')).show(IsRoundFailed).content('Sorry - ').props),
             React.createElement(TextElement, elProps(pathTo('RoundSkipped')).show(RoundSkipped).content('Skipped').props),
+            React.createElement(Button, elProps(pathTo('NewRound')).content('New Maze').appearance('filled').show(Status == 'Playing' && IsRoundComplete).action(NewRound_action).props),
+    ),
             React.createElement(Block, elProps(pathTo('EndedPanel')).layout('vertical').show(Status == 'Ended').styles(elProps(pathTo('EndedPanel.Styles')).position('absolute').left('40%').translate('-50% -50%').top('50%').backgroundColor('lightblue').padding('1em').borderRadius('10px').border('2px solid blue').opacity('1').minWidth('20em').props).props,
             React.createElement(TextElement, elProps(pathTo('Title')).styles(elProps(pathTo('Title.Styles')).fontFamily('fantasy, Arial').fontSize('28').color('#039a03').props).content('Congratulations!').props),
             React.createElement(TextElement, elProps(pathTo('Score')).content('You have scored ' + Score + ' points!').props),
             React.createElement(TextElement, elProps(pathTo('Whatnext')).content('Click Start Game to have another go').props),
     ),
             React.createElement(Block, elProps(pathTo('RoundControls')).layout('horizontal').props,
-            React.createElement(Button, elProps(pathTo('NewRound')).content('New Maze').appearance('filled').show(Status == 'Playing' && IsRoundComplete).action(NewRound_action).props),
             React.createElement(Button, elProps(pathTo('SkipRound')).content('Skip this one').appearance('outline').show(false).action(SkipRound_action).props),
     ),
     ),

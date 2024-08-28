@@ -784,54 +784,79 @@
                   "kind": "Block"
                 },
                 {
-                  "id": "text_20",
-                  "name": "Round In Progress",
+                  "id": "block_14",
+                  "name": "Round Status Block",
                   "properties": {
-                    "content": {
-                      "expr": "'You have ' + BoardPointsRemaining + ' points left on this maze'"
+                    "layout": "horizontal"
+                  },
+                  "elements": [
+                    {
+                      "id": "text_22",
+                      "name": "Round In Progress",
+                      "properties": {
+                        "content": {
+                          "expr": "'You have ' + BoardPointsRemaining + ' points left on this maze'"
+                        },
+                        "show": {
+                          "expr": "RoundInPlay"
+                        }
+                      },
+                      "kind": "Text"
                     },
-                    "show": {
-                      "expr": "RoundInPlay"
-                    }
-                  },
-                  "kind": "Text"
-                },
-                {
-                  "id": "text_9",
-                  "name": "Round Won",
-                  "properties": {
-                    "content": {
-                      "expr": "'You made it! ' + BoardPointsRemaining + ' points added'"
+                    {
+                      "id": "text_23",
+                      "name": "Round Won",
+                      "properties": {
+                        "content": {
+                          "expr": "'You made it! ' + BoardPointsRemaining + ' points added'"
+                        },
+                        "show": {
+                          "expr": "IsRoundWon"
+                        }
+                      },
+                      "kind": "Text"
                     },
-                    "show": {
-                      "expr": "IsRoundWon"
-                    }
-                  },
-                  "kind": "Text"
-                },
-                {
-                  "id": "text_10",
-                  "name": "Round Failed",
-                  "properties": {
-                    "content": {
-                      "expr": "'Sorry - ' "
+                    {
+                      "id": "text_24",
+                      "name": "Round Failed",
+                      "properties": {
+                        "content": {
+                          "expr": "'Sorry - ' "
+                        },
+                        "show": {
+                          "expr": "IsRoundFailed"
+                        }
+                      },
+                      "kind": "Text"
                     },
-                    "show": {
-                      "expr": "IsRoundFailed"
+                    {
+                      "id": "text_25",
+                      "name": "Round Skipped",
+                      "properties": {
+                        "content": "Skipped",
+                        "show": {
+                          "expr": "RoundSkipped"
+                        }
+                      },
+                      "kind": "Text"
+                    },
+                    {
+                      "id": "button_17",
+                      "name": "New Round",
+                      "properties": {
+                        "action": {
+                          "expr": "StartNewRound()"
+                        },
+                        "show": {
+                          "expr": "Status == 'Playing' && IsRoundComplete"
+                        },
+                        "content": "New Maze",
+                        "appearance": "filled"
+                      },
+                      "kind": "Button"
                     }
-                  },
-                  "kind": "Text"
-                },
-                {
-                  "id": "text_11",
-                  "name": "Round Skipped",
-                  "properties": {
-                    "content": "Skipped",
-                    "show": {
-                      "expr": "RoundSkipped"
-                    }
-                  },
-                  "kind": "Text"
+                  ],
+                  "kind": "Block"
                 },
                 {
                   "id": "block_4",
@@ -895,21 +920,6 @@
                     "layout": "horizontal"
                   },
                   "elements": [
-                    {
-                      "id": "button_6",
-                      "name": "New Round",
-                      "properties": {
-                        "action": {
-                          "expr": "StartNewRound()"
-                        },
-                        "show": {
-                          "expr": "Status == 'Playing' && IsRoundComplete"
-                        },
-                        "content": "New Maze",
-                        "appearance": "filled"
-                      },
-                      "kind": "Button"
-                    },
                     {
                       "id": "button_7",
                       "name": "Skip Round",
