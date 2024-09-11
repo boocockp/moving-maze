@@ -26,7 +26,7 @@ const MainPage_BoardPiecesItem = React.memo(function MainPage_BoardPiecesItem(pr
 function MainPage(props) {
     const pathTo = name => props.path + '.' + name
     const {Page, Calculation, Data, Timer, TextElement, Dialog, Button, Block, ItemSet} = Elemento.components
-    const {Floor, And, IsNull, ForEach, Range, Or, Not, If, RandomListFrom, RandomFrom, ListContains, Random, WithUpdates, ItemAt, Select, Ceiling} = Elemento.globalFunctions
+    const {Floor, And, IsNull, ForEach, Range, Eq, Or, Not, Max, If, RandomListFrom, RandomFrom, ListContains, Random, WithUpdates, ItemAt, Select, Ceiling} = Elemento.globalFunctions
     const {Set, Reset} = Elemento.appFunctions
     const _state = Elemento.useGetStore()
     const Rows = _state.setObject(pathTo('Rows'), new Calculation.State(stateProps(pathTo('Rows')).value(8).props))
@@ -48,8 +48,8 @@ function MainPage(props) {
     const Status = _state.setObject(pathTo('Status'), new Data.State(stateProps(pathTo('Status')).value('Ready').props))
     const Score = _state.setObject(pathTo('Score'), new Data.State(stateProps(pathTo('Score')).value(0).props))
     const RoundSkipped = _state.setObject(pathTo('RoundSkipped'), new Data.State(stateProps(pathTo('RoundSkipped')).value(false).props))
-    const IsRoundFailed = _state.setObject(pathTo('IsRoundFailed'), new Calculation.State(stateProps(pathTo('IsRoundFailed')).value(false).props))
-    const BoardPointsRemaining = _state.setObject(pathTo('BoardPointsRemaining'), new Calculation.State(stateProps(pathTo('BoardPointsRemaining')).value(PointsAllowed - PointsUsed).props))
+    const BoardPointsRemaining = _state.setObject(pathTo('BoardPointsRemaining'), new Calculation.State(stateProps(pathTo('BoardPointsRemaining')).value(Max(PointsAllowed - PointsUsed, 0)).props))
+    const IsRoundFailed = _state.setObject(pathTo('IsRoundFailed'), new Calculation.State(stateProps(pathTo('IsRoundFailed')).value(Eq(BoardPointsRemaining, 0)).props))
     const GameRunning = _state.setObject(pathTo('GameRunning'), new Calculation.State(stateProps(pathTo('GameRunning')).value(Or(Status == 'Playing', Status == 'Paused')).props))
     const RowOf = _state.setObject(pathTo('RowOf'), React.useCallback(wrapFn(pathTo('RowOf'), 'calculation', (index) => {
         return Floor(index / Columns)
@@ -81,9 +81,8 @@ function MainPage(props) {
     }), [EndRound])
     const WhenRoundComplete = _state.setObject(pathTo('WhenRoundComplete'), new Calculation.State(stateProps(pathTo('WhenRoundComplete')).value(IsRoundComplete).whenTrueAction(WhenRoundComplete_whenTrueAction).props))
     const EndGame = _state.setObject(pathTo('EndGame'), React.useCallback(wrapFn(pathTo('EndGame'), 'calculation', () => {
-        Set(Status, 'Ended')
-        return EndRound()
-    }), [Status, EndRound]))
+        return Set(Status, 'Ended')
+    }), [Status]))
     const GameTimer_endAction = React.useCallback(wrapFn(pathTo('GameTimer'), 'endAction', async ($timer) => {
         await EndGame()
     }), [EndGame])
@@ -228,8 +227,7 @@ Click on an empty space next to your smiley to move it.  Horizontal or vertical 
 Click on an obstacle to make it move somewhere else - this costs the number of points on the obstacle.
 
 
-
-And we should mention that after each of your moves, one of the obstacles will make a random move (wait for this to finish before trying to move again).
+Oh yes - after each of your moves, one of the obstacles will make a random move (wait for this to finish before trying to move again).
 
 
 You score as many points as you have left when you get to the top row.
@@ -263,7 +261,7 @@ Or Start Game to dive straight in!`).props),
             React.createElement(Block, elProps(pathTo('RoundStatusBlock')).layout('horizontal').props,
             React.createElement(TextElement, elProps(pathTo('RoundInProgress')).show(RoundInPlay).content('You have ' + BoardPointsRemaining + ' points left on this maze').props),
             React.createElement(TextElement, elProps(pathTo('RoundWon')).show(IsRoundWon).content('You made it! ' + BoardPointsRemaining + ' points added').props),
-            React.createElement(TextElement, elProps(pathTo('RoundFailed')).show(IsRoundFailed).content('Sorry - ').props),
+            React.createElement(TextElement, elProps(pathTo('RoundFailed')).allowHtml(false).show(IsRoundFailed).content('Sorry - no points left').props),
             React.createElement(TextElement, elProps(pathTo('RoundSkipped')).show(RoundSkipped).content('Skipped').props),
             React.createElement(Button, elProps(pathTo('NewRound')).content('New Maze').appearance('filled').show(Status == 'Playing' && IsRoundComplete).action(NewRound_action).props),
     ),

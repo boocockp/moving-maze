@@ -202,7 +202,7 @@
               "name": "Is Round Failed",
               "properties": {
                 "calculation": {
-                  "expr": "false"
+                  "expr": "Eq(BoardPointsRemaining, 0)"
                 },
                 "show": false
               },
@@ -250,7 +250,7 @@
               "properties": {
                 "show": false,
                 "calculation": {
-                  "expr": "PointsAllowed - PointsUsed"
+                  "expr": "Max(PointsAllowed - PointsUsed, 0)"
                 }
               },
               "kind": "Calculation"
@@ -350,7 +350,7 @@
               "properties": {
                 "action": true,
                 "calculation": {
-                  "expr": "Set(Status, 'Ended')\nEndRound()"
+                  "expr": "Set(Status, 'Ended')"
                 }
               },
               "kind": "Function"
@@ -512,7 +512,7 @@
                   "id": "text_3",
                   "name": "Instructions Text",
                   "properties": {
-                    "content": "Move the smiley face to the top row of the board, while keeping as many points as possible.\n\n\nClick on an empty space next to your smiley to move it.  Horizontal or vertical moves cost 1 point, diagonal moves cost 3 points. \n\n\nClick on an obstacle to make it move somewhere else - this costs the number of points on the obstacle.\n\n\n\nAnd we should mention that after each of your moves, one of the obstacles will make a random move (wait for this to finish before trying to move again).\n\n\nYou score as many points as you have left when you get to the top row.\n\n\nClick New Maze to start again.\n\n\nYou have 3 minutes to complete as many mazes as you can.",
+                    "content": "Move the smiley face to the top row of the board, while keeping as many points as possible.\n\n\nClick on an empty space next to your smiley to move it.  Horizontal or vertical moves cost 1 point, diagonal moves cost 3 points. \n\n\nClick on an obstacle to make it move somewhere else - this costs the number of points on the obstacle.\n\n\nOh yes - after each of your moves, one of the obstacles will make a random move (wait for this to finish before trying to move again).\n\n\nYou score as many points as you have left when you get to the top row.\n\n\nClick New Maze to start again.\n\n\nYou have 3 minutes to complete as many mazes as you can.",
                     "allowHtml": true
                   },
                   "kind": "Text"
@@ -797,11 +797,12 @@
                       "name": "Round Failed",
                       "properties": {
                         "content": {
-                          "expr": "'Sorry - ' "
+                          "expr": "'Sorry - no points left' "
                         },
                         "show": {
                           "expr": "IsRoundFailed"
-                        }
+                        },
+                        "allowHtml": false
                       },
                       "kind": "Text"
                     },
